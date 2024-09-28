@@ -1,3 +1,4 @@
 hostloc.com
+microsoft.com
 stackoverflow.com
 w3schools.com
