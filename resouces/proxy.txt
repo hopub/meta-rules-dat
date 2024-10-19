@@ -1,5 +1,4 @@
 acg.rip
-appinstall.life
 bulianglin.com
 comfyworkflows.com
 docker.com
