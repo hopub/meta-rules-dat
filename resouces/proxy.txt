@@ -1,4 +1,9 @@
+api.themoviedb.org
 bulianglin.com
+dns.adguard-dns.com
+dns.cloudflare.com
+dns.google
+doh.opendns.com
 kjkkk.top
 v2rayssr.com
 yts.mx
