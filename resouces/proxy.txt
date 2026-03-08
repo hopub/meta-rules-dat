@@ -6,5 +6,6 @@ dns.google
 doh.opendns.com
 kjkkk.top
 linux.do
+supawork.ai
 v2rayssr.com
 yts.mx
