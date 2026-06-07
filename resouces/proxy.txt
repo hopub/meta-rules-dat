@@ -1,4 +1,5 @@
 api.themoviedb.org
+awwwards.com
 bulianglin.com
 dns.adguard-dns.com
 dns.cloudflare.com
