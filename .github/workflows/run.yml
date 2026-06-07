@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Set variables
         run: |
@@ -26,7 +28,7 @@ jobs:
           echo "WIN_EXTRA=https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/extra.txt" >> $GITHUB_ENV
         shell: bash
 
-      - name: Checkout
+      - name: Checkout the current repo
         uses: actions/checkout@v4
 
       - name: Checkout Loyalsoldier/domain-list-custom
@@ -163,6 +165,7 @@ jobs:
           curl -sSL https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PrivateTracker/PrivateTracker.list | ${{ env.SED }} > ./community/data/tracker
           curl -sSL https://gitea.com/XIU2/TrackersListCollection/raw/branch/master/all.txt | grep -i "\.[A-Z]" | grep -v tracker | sed 's/^.*\/\///g' | sed 's/:.*\/.*//g' >> ./community/data/tracker
           curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/BlockHttpDNS/BlockHttpDNS.list | ${{ env.SED }} > ./community/data/httpdns
+          echo "zed.dev" >> ./community/data/category-dev
 
       - name: Build geosite.dat file
         run: |
@@ -286,6 +289,13 @@ jobs:
       #     chmod 755 bm7.sh && ./bm7.sh
       #     rm -r bm7.sh sing-box* rule
 
+      - name: Build BundleMRS.7z
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y p7zip-full
+          cd meta-rule
+          7z a ../BundleMRS.7z -mx=1 -r *.mrs
+
       - name: Move and zip files
         run: |
           mkdir -p ./publish/
@@ -302,6 +312,7 @@ jobs:
           install -Dp ./geoip-lite.db ./publish/
           install -Dp ./geoip.metadb ./publish/
           install -Dp ./geoip-lite.metadb ./publish/
+          install -Dp ./BundleMRS.7z ./publish/
           cd ./publish || exit 1
           sha256sum country.mmdb > country.mmdb.sha256sum
           sha256sum country-lite.mmdb > country-lite.mmdb.sha256sum
@@ -315,25 +326,15 @@ jobs:
           sha256sum geoip-lite.db > geoip-lite.db.sha256sum
           sha256sum geoip.metadb > geoip.metadb.sha256sum
           sha256sum geoip-lite.metadb > geoip-lite.metadb.sha256sum
+          sha256sum BundleMRS.7z > BundleMRS.7z.sha256sum
           sha256sum GeoLite2-ASN.mmdb > GeoLite2-ASN.mmdb.sha256sum
 
-      - name: Delete current release assets
-        uses: andreaswilli/delete-release-assets-action@v3.0.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: latest
-          deleteOnlyFromDrafts: false
-
-      - name: Create and Upload Release
-        id: upload_release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          release_name: Release ${{ env.BUILDTIME }}
-          tag: latest
-          file_glob: true
-          overwrite: true
-          file: ./publish/*
+      - name: Delete release if exist then create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete latest --cleanup-tag -y || true
+          gh release create latest --title "Release ${{ env.BUILDTIME }}" ./publish/*
 
       - name: Git push assets to "release" branch
         run: |
