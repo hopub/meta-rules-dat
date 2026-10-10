@@ -1,4 +1,7 @@
+agentrouter.org
+anyrouter.top
 api.themoviedb.org
+awwwards.com
 bulianglin.com
 dns.adguard-dns.com
 dns.cloudflare.com
@@ -6,6 +9,7 @@ dns.google
 doh.opendns.com
 kjkkk.top
 linux.do
+new-api.abrdns.com
 supawork.ai
 v2rayssr.com
 yts.mx
